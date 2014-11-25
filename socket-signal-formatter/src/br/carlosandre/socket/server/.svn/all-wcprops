@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/FUJITSU/!svn/ver/23/FBR.001.2013%20-%20Socket%20Server/5.%20Source%20Code/branches/DEV-SocketServer/src/br/com/fujitsu/socket/server
+END
+SocketServer.java
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/FUJITSU/!svn/ver/23/FBR.001.2013%20-%20Socket%20Server/5.%20Source%20Code/branches/DEV-SocketServer/src/br/com/fujitsu/socket/server/SocketServer.java
+END
+AdminConnectionThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 160
+/FUJITSU/!svn/ver/23/FBR.001.2013%20-%20Socket%20Server/5.%20Source%20Code/branches/DEV-SocketServer/src/br/com/fujitsu/socket/server/AdminConnectionThread.java
+END
+PortListenerThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 157
+/FUJITSU/!svn/ver/23/FBR.001.2013%20-%20Socket%20Server/5.%20Source%20Code/branches/DEV-SocketServer/src/br/com/fujitsu/socket/server/PortListenerThread.java
+END
+ConnectionThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 155
+/FUJITSU/!svn/ver/23/FBR.001.2013%20-%20Socket%20Server/5.%20Source%20Code/branches/DEV-SocketServer/src/br/com/fujitsu/socket/server/ConnectionThread.java
+END
+AdminPortListenerThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/FUJITSU/!svn/ver/23/FBR.001.2013%20-%20Socket%20Server/5.%20Source%20Code/branches/DEV-SocketServer/src/br/com/fujitsu/socket/server/AdminPortListenerThread.java
+END

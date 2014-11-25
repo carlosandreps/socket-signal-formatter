@@ -1,0 +1,29 @@
+package br.carlosandre.socket.core.data;
+
+import java.io.Serializable;
+import java.util.Map;
+
+public class SocketData implements Serializable {
+
+	private static final long serialVersionUID = -9074235898134375443L;
+
+	private Object content;
+	private Map<String, Object> parameters;
+
+	public Object getContent() {
+		return content;
+	}
+
+	public void setContent(Object content) {
+		this.content = content;
+	}
+
+	public Map<String, Object> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String, Object> parameters) {
+		this.parameters = parameters;
+	}
+
+}

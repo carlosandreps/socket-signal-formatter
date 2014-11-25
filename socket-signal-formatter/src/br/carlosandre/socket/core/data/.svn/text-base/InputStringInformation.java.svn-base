@@ -1,0 +1,6 @@
+package br.com.fujitsu.socket.core.data;
+
+public class InputStringInformation extends InputData {
+
+	
+}

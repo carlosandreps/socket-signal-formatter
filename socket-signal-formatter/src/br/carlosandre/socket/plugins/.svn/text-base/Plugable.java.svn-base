@@ -1,0 +1,10 @@
+package br.com.fujitsu.socket.plugins;
+
+import br.com.fujitsu.socket.core.data.SocketData;
+import br.com.fujitsu.socket.core.data.TransactionData;
+import br.com.fujitsu.socket.settings.SocketSettings;
+
+public interface Plugable {
+
+	public void process(SocketSettings socketSettings, TransactionData transactionData, SocketData socketData);
+}

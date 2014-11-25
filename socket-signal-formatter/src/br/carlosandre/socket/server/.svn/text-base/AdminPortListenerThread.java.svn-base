@@ -1,0 +1,76 @@
+package br.com.fujitsu.socket.server;
+
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminPortListenerThread extends Thread {
+	private ServerSocket serverSocket;
+	private int port;
+	private String ip;
+	private List<AdminConnectionThread> adminConnectionThreadList = new ArrayList<AdminConnectionThread>();
+
+	public AdminPortListenerThread(int port, String ip) {
+		this.port = port;
+		this.ip = ip;
+	}
+
+	public void run() {
+		try {
+			InetAddress inetAddress = InetAddress.getByName(ip);
+
+			serverSocket = new ServerSocket(port, 0, inetAddress);
+
+			System.out.println("Administration - Listening port: " + port);
+
+			while (true) {
+				Socket socket = serverSocket.accept();
+				AdminConnectionThread adminConnectionThread = new AdminConnectionThread(socket);
+				adminConnectionThread.start();
+				adminConnectionThreadList.add(adminConnectionThread);
+
+				removeDeadThreads();
+			}
+		} catch (SocketException ex) {
+			if (SocketServer.isShuttingDown()) {
+				System.out.println("Administration - Closing port: " + port);
+			} else {
+				ex.printStackTrace();
+			}
+		} catch (SocketTimeoutException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				serverSocket.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	private void removeDeadThreads() {
+		for (int i = adminConnectionThreadList.size() - 1; i >= 0; i--) {
+			if (!adminConnectionThreadList.get(i).isAlive()) {
+				adminConnectionThreadList.remove(i);
+			}
+		}
+	}
+
+	public void shutDown() {
+		try {
+			serverSocket.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		for (AdminConnectionThread adminConnectionThread : adminConnectionThreadList) {
+			adminConnectionThread.shutDown();
+		}
+	}
+}

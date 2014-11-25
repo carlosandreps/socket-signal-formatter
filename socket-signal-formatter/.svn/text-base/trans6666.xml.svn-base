@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<transaction port="6666">
+	<input>
+		<inputStringInformation>
+			<field name="tipoPoder" type="X(04)" />
+			<field name="esfera" type="X(01)" />
+			<field name="flagDF" type="X(01)" />
+			<field name="codigoLbgeEstado" type="X(08)" />
+			<field name="codigoLbgeMunicipio" type="X(08)" />
+			<field name="dvlbgeMunicipio" type="X(01)" />
+		</inputStringInformation>
+	</input>
+	<output>
+		<fileOutputInformation directory="c:/socket_files/"
+			fileName="resultTrans002" appendFile="N" suffixName="#{timestamp}"
+			type="txt" delimited="Y">
+			<field name="head" type="X(03)" value="ABCDE" />
+			<field name="codigoLbgeMunicipio" type="X(08)" />
+			<field name="dvlbgeMunicipio" type="X(01)" />
+			<field name="end" type="X(03)" value="EOF" />
+		</fileOutputInformation>
+	</output>
+</transaction>

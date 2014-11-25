@@ -1,0 +1,68 @@
+package br.com.fujitsu.socket.server;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+
+import br.com.fujitsu.socket.core.DataSender;
+import br.com.fujitsu.socket.core.data.SocketData;
+import br.com.fujitsu.socket.core.data.TransactionData;
+import br.com.fujitsu.socket.settings.SocketSettings;
+
+public class ConnectionThread extends Thread {
+	private Socket socket;
+	private SocketSettings settings;
+	private TransactionData transactionData;
+
+	public ConnectionThread(Socket socket, SocketSettings settings, TransactionData transactionData) {
+		this.socket = socket;
+		this.settings = settings;
+		this.transactionData = transactionData;
+	}
+
+	public void run() {
+		BufferedReader br = null;
+		String inputLine;
+
+		try {
+			socket.setSoTimeout(settings.getServerTimeout());
+
+			System.out.println("Accepting connection from IP: " + socket.getInetAddress().getHostAddress());
+
+			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+			while (!SocketServer.isShuttingDown() && (inputLine = br.readLine()) != null) {
+				SocketData socketData = new SocketData();
+				socketData.setContent(inputLine);
+				DataSender.send(settings, transactionData, socketData);
+			}
+
+		} catch (SocketException ex) {
+			if (SocketServer.isShuttingDown()) {
+				System.out.println("Closing connection from IP: " + socket.getInetAddress().getHostAddress());
+			} else {
+				ex.printStackTrace();
+			}
+		} catch (SocketTimeoutException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				socket.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public void shutDown() {
+		try {
+			socket.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+}

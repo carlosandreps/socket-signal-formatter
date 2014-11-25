@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<settings>
+	<server-config>
+		<address>172.25.130.18</address>
+		<timeout>1000000</timeout>
+		<admin-port>6060</admin-port>
+	</server-config>
+	<transactions>
+		<transaction-file>trans5555.xml</transaction-file>
+		<transaction-file>trans6666.xml</transaction-file>
+	</transactions>
+</settings>

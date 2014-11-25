@@ -1,0 +1,11 @@
+package br.com.fujitsu.socket.constants;
+
+public class Constants {
+
+	public static final String CONFIG_PORT = "port";
+	public static final String CONFIG_TIMEOUT = "timeout";
+	public static final String CONFIG_ADDRESS = "address";
+	public static final String CONFIG_ADMIN_PORT = "admin-port";
+	public static final String CONFIG_SERVER_CONFIG = "server-config";
+
+}

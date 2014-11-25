@@ -1,0 +1,67 @@
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
+
+import br.com.fujitsu.socket.core.DataReceiver;
+
+public class Panel extends JFrame implements ActionListener {
+	private static final long serialVersionUID = -2406465821966555930L;
+
+	private JButton startServerButton = new JButton("Start Server");
+	private JButton stopServerButton = new JButton("Stop Server");
+
+	private JTextArea myText = new JTextArea("My text");
+	private JPanel bottomPanel = new JPanel();
+	private JPanel holdAll = new JPanel();
+
+	public Panel() {
+		bottomPanel.setLayout(new FlowLayout());
+		bottomPanel.add(startServerButton);
+
+		holdAll.setLayout(new BorderLayout());
+		holdAll.add(bottomPanel, BorderLayout.SOUTH);
+		holdAll.add(myText, BorderLayout.CENTER);
+
+		getContentPane().add(holdAll, BorderLayout.CENTER);
+
+		startServerButton.addActionListener(this);
+
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	}
+
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel("net.sourceforge.mlf.metouia.MetouiaLookAndFeel");
+		} catch (Exception e) {
+			// e.printStackTrace();
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception ee) {
+				System.out.println("Error setting native LAF: " + ee);
+			}
+		}
+
+		Panel myApplication = new Panel();
+
+		// Specify where will it appear on the screen:
+		myApplication.setLocation(10, 10);
+		myApplication.setSize(300, 300);
+
+		// Show it!
+		myApplication.setVisible(true);
+
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == startServerButton) {
+			DataReceiver.main(null);
+		}
+	}
+}

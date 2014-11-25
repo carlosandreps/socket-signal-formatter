@@ -1,0 +1,195 @@
+package br.com.fujitsu.socket.plugins;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import br.com.fujitsu.socket.core.data.FieldData;
+import br.com.fujitsu.socket.core.data.FileOutputInformation;
+import br.com.fujitsu.socket.core.data.SocketData;
+import br.com.fujitsu.socket.core.data.TransactionData;
+import br.com.fujitsu.socket.settings.SocketSettings;
+
+public class FilePlugin implements Plugable {
+
+	private static final String BLANK = "";
+
+	@Override
+	public void process(SocketSettings socketSettings, TransactionData transactionData, SocketData socketData) {
+		System.out.println();
+
+		List<FieldData> inputFields = new ArrayList<FieldData>(transactionData.getInputData().getFields());
+		List<FieldData> outputFields = new ArrayList<FieldData>(transactionData.getOutputData().getFields());
+		Map<String, FieldData> fieldsMap = new LinkedHashMap<String, FieldData>();
+		FileOutputInformation fileOutputInformation = (FileOutputInformation) transactionData.getOutputData();
+
+		String content = (String) socketData.getContent();
+		String newContent;
+		StringBuilder sb = new StringBuilder();
+		int start = 0;
+		int end = 0;
+
+		for (FieldData fieldData : inputFields) {
+
+			if (isEmpty(fieldData)) {
+				String value = BLANK;
+				FieldData newFieldData = new FieldData();
+				end = start + fieldData.getLenght();
+
+				if (start > content.length()) {
+					newFieldData.setValue(value);
+				} else if (end > content.length()) {
+					value = content.substring(start, content.length());
+				} else {
+					value = content.substring(start, end);
+				}
+				if (value.length() < fieldData.getLenght())
+					for (int i = start; i < end; i++) {
+						value = value + " ";
+					}
+				newFieldData.setName(fieldData.getName());
+				newFieldData.setType(fieldData.getType());
+				newFieldData.setValue(value);
+				fieldsMap.put(newFieldData.getName(), newFieldData);
+
+				start = end;
+			} else {
+				end = fieldData.getType().length();
+				start = start + end;
+			}
+		}
+
+		for (FieldData outputFieldData : outputFields) {
+			String column;
+			FieldData inputFieldData = fieldsMap.get(outputFieldData.getName());
+			int lenght;
+
+			if (inputFieldData == null) {
+				lenght = outputFieldData.getLenght();
+				column = outputFieldData.getValue();
+			} else {
+				lenght = inputFieldData.getLenght();
+				column = inputFieldData.getValue();
+			}
+
+			if (fileOutputInformation.isDelimited()) {
+				column = column.trim() + ";";
+			} else {
+				if (column.length() > lenght) {
+					column = column.substring(0, lenght);
+				} else if (column.length() < lenght) {
+					while (column.length() <= lenght) {
+						column = column + " ";
+					}
+				}
+			}
+			sb.append(column);
+		}
+		newContent = sb.toString();
+		System.out.println(newContent);
+		writeFile(transactionData, newContent);
+	}
+
+	private void writeFile(TransactionData transactionData, String newContent) {
+		try {
+			FileOutputInformation fileOutputInformation = (FileOutputInformation) transactionData.getOutputData();
+
+			String directory = fileOutputInformation.getDirectory();
+			String fileName = fileOutputInformation.getFileName();
+			String fileExtension = fileOutputInformation.getType();
+			String suffixName = fileOutputInformation.getSuffixName();
+			String content = BLANK;
+			String fullFilePath = BLANK;
+			String fileSuffix = BLANK;
+
+			boolean appendFile = fileOutputInformation.isAppendFile();
+
+			if (suffixName != null && suffixName.equals("#{timestamp}")) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+				fileSuffix = sdf.format(new Date());
+			} else if (suffixName != null && suffixName.equals("#{random}")) {
+				fileSuffix = generateRandomString(5);
+			} else {
+				fileSuffix = suffixName;
+			}
+			fullFilePath = directory + File.separator + fileName + fileSuffix + "." + fileExtension;
+
+			File file = new File(fullFilePath);
+			File fDirectory = new File(directory);
+			fDirectory.mkdirs();
+
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			if (appendFile) {
+				content = readFile(fullFilePath);
+			}
+
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(content + newContent);
+			bw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String readFile(String path) {
+		BufferedReader br = null;
+		StringBuilder sb = new StringBuilder();
+		try {
+
+			br = new BufferedReader(new FileReader(path));
+
+			String line = br.readLine();
+			sb = new StringBuilder();
+			while (line != null) {
+				sb.append(line);
+				line = br.readLine();
+				sb.append(String.format("%n"));
+			}
+
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return sb.toString();
+	}
+
+	public String generateRandomString(int size) {
+		char[] chars = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
+		StringBuilder sb = new StringBuilder();
+		Random random = new Random();
+		for (int i = 0; i < size; i++) {
+			char c = chars[random.nextInt(chars.length)];
+			sb.append(c);
+		}
+		String output = sb.toString();
+
+		return output;
+	}
+
+	private boolean isEmpty(FieldData fieldData) {
+		return (fieldData.getValue() == null) || (fieldData.getValue() != null && fieldData.getValue().isEmpty());
+	}
+}

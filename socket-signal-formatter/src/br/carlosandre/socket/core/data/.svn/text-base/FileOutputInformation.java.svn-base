@@ -1,0 +1,73 @@
+package br.com.fujitsu.socket.core.data;
+
+public class FileOutputInformation extends OutputData {
+
+	private String fileName;
+	private boolean appendFile;
+	private String suffixName;
+	private boolean delimited;
+	private String type;
+	private String directory;
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public FileOutputInformation() {
+		super();
+		setupDefaultValues();
+	}
+
+	private void setupDefaultValues() {
+		this.fileName = "socket_file";
+		this.appendFile = false;
+		this.suffixName = "";
+		this.delimited = false;
+		this.type = "txt";
+		this.directory = "/";
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public boolean isAppendFile() {
+		return appendFile;
+	}
+
+	public void setAppendFile(boolean appendFile) {
+		this.appendFile = appendFile;
+	}
+
+	public String getSuffixName() {
+		return suffixName;
+	}
+
+	public void setSuffixName(String suffixName) {
+		this.suffixName = suffixName;
+	}
+
+	public boolean isDelimited() {
+		return delimited;
+	}
+
+	public void setDelimited(boolean delimited) {
+		this.delimited = delimited;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getDirectory() {
+		return directory;
+	}
+
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
+}
